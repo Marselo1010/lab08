@@ -1,10 +1,12 @@
 package it.unibo.mvc;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,18 +34,37 @@ public class MiniGUI {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
         final JButton write = new JButton("Print a random number on standard output");
-        canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //part 1
+
+        final JPanel myPanel = new JPanel();
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.X_AXIS));
+        myPanel.add(write);
+        canvas.add(myPanel, BorderLayout.CENTER);
+
+        //part 2
+
+        final TextField res = new TextField("result");
+        canvas.add(res, BorderLayout.NORTH);
+
+        //part 3
+
         /*
          * Handlers
          */
+
         write.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
-                System.out.println(randomGenerator.nextInt());
+                final Integer tmp = randomGenerator.nextInt();
+                res.setText(tmp.toString());
+                System.out.println(tmp.toString()); // NOPMD suppressed as it is a false positive
+
             }
         });
+
     }
 
     private void display() {
