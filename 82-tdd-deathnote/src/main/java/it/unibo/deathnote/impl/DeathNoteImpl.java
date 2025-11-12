@@ -6,13 +6,13 @@ import java.util.Map;
 import it.unibo.deathnote.api.DeathNote;
 
 public class DeathNoteImpl implements DeathNote{
-
+    
     private Map<String,CauseDetails> person = new HashMap<>();
 
     @Override
     public String getRule(int ruleNumber) {
        if(ruleNumber < 0 && ruleNumber > RULES.size()){
-        throw new IllegalArgumentException("Your rule number doesn't exist -> must be 0-" + RULES.size());
+        throw new IllegalArgumentException("Your rule number doesn't exist -> must be [ 0-" + RULES.size() + " ]");
        } else {
             return RULES.get(ruleNumber);
        }
@@ -20,6 +20,15 @@ public class DeathNoteImpl implements DeathNote{
 
     @Override
     public void writeName(String name) {
+        if(name == null){
+            throw new NullPointerException("you must write the name of the person");
+        } else if (person.containsKey(name)) {
+            throw new ClassCastException("this name is already present in the Death Note");
+             } else {
+                person.put(name, null);
+             }
+
+        
         
     }
 
@@ -62,6 +71,16 @@ public class DeathNoteImpl implements DeathNote{
             this.cause = cause;
             this.details = details;
 
+        }
+
+        //getter
+
+        public String getCause() {
+            return this.cause;
+        }
+
+        public String getDetails() {
+            return this.details;
         }
     }
 
