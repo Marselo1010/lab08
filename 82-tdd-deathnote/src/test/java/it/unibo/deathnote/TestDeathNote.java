@@ -3,6 +3,7 @@ package it.unibo.deathnote;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static it.unibo.deathnote.api.DeathNote.RULES;
 
@@ -21,7 +22,8 @@ import it.unibo.deathnote.impl.DeathNoteImpl;
 class TestDeathNote {
 
     private DeathNote deathNoteTest;
-    final String person = "marco"; 
+    final String person = "marco";
+    final String person2 = "giulia"; 
     final String notWrittenPerson = "different person";
 
     @BeforeEach
@@ -101,12 +103,54 @@ class TestDeathNote {
       */
 
       @Test
-      void testCauseOfDeath(){
-        deathNoteTest.writeDeathCause(null); //TODO fose al posto di null va messo ""
-        assertEquals("heart attack", deathNoteTest.getDeathCause(person));
+      void testCauseOfDeath() throws InterruptedException{
+
+            try {
+                deathNoteTest.writeDeathCause("suicide");
+                Assertions.fail("you can't write the cause before writing the name of the person");
+            } catch (final IllegalStateException e) {
+                
+            }   
         
+        deathNoteTest.writeName(person);
+        assertEquals("heart attack", deathNoteTest.getDeathCause(person));
+        deathNoteTest.writeName(person2);
+        deathNoteTest.writeDeathCause("karting accident");
+        Thread.sleep(100);
+        deathNoteTest.writeDeathCause("car incident");
+        assertEquals("karting accident",deathNoteTest.getDeathCause(person2));
       }
 
+    /*
+      * 5. After writing the cause of death, details of the death should be written in the next 6 seconds and 40 milliseconds
+      * of writing the death's cause.
+      * check that writing the death details before writing a name throws the correct exception
+      * write the name of a human in the notebook
+      * verify that the details of the death are currently empty
+      * set the details of the death to "ran for too long"
+      * verify that death details have been set correctly (returned true, and the details are indeed "ran for too long")
+      * write the name of another human in the notebook
+      * sleep for 6100ms
+      * try to change the details
+      * verify that the details have not been changed
+      */
 
+      @Test
+      void testDeathDetails() throws InterruptedException{
+            try {
+                deathNoteTest.writeDetails("death will come at 21:00 ");
+                Assertions.fail("you can't write the details of the death before writing the name of the person");
+            } catch (final IllegalStateException e) {
+                
+            }
+            deathNoteTest.writeName(person);
+            assertEquals("", deathNoteTest.getDeathDetails(person));
+            deathNoteTest.writeDetails("ran for too long");
+            assertEquals("ran for too long", deathNoteTest.getDeathDetails(person));
+            deathNoteTest.writeName(person2);
+            Thread.sleep(6100);
+            deathNoteTest.writeDetails("death will come at 21:00 ");
+            assertEquals("", deathNoteTest.getDeathDetails(person2));
 
+      }
 }
